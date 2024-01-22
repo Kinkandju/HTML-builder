@@ -35,6 +35,8 @@ async function checkIfDirectoryExists(dirPath) {
 
     return dirStats.isDirectory();
   } catch (error) {
+    /* ENOENT is short for "Error NO ENTry" (there is no such entry).
+    This error occurs when you try to access a file or directory that does not exist. */
     if (error.code === 'ENOENT') {
       return false;
     }
