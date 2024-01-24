@@ -32,3 +32,12 @@ createInterfaceReadLine.on('line', (input) => {
     writeStream.write(input + '\n');
   }
 });
+
+/* The 'SIGINT' (Signal Interrupt) event is one of the standard 
+signals (interrupts) that can be sent by the operating system 
+to interrupt the execution of a program. */
+createInterfaceReadLine.on('SIGINT', () => {
+  console.log('Bye, folks!');
+  writeStream.close();
+  process.exit();
+});
