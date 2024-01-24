@@ -1,16 +1,20 @@
-const { mkdir, readdir, copyFile, stat } = require('fs/promises');
+const { mkdir, readdir, copyFile, stat, rm } = require('fs/promises');
 const { join } = require('path');
 
-async function copyDir() {
+(async function copyDir() {
   const sourceDir = './04-copy-directory/files';
   const destinationDir = './04-copy-directory/files-copy';
 
   try {
     /* check if the files-copy folder exists, and if not, then create it */
     const dirExists = await checkIfDirectoryExists(destinationDir);
-    if (!dirExists) {
-      await mkdir(destinationDir, { recursive: true });
+
+    if (dirExists) {
+      /* if the files-copy folder already exists, delete it recursively */
+      await rm(destinationDir, { recursive: true });
     }
+    /* create the files-copy folder */
+    await mkdir(destinationDir, { recursive: true });
 
     /* read the contents of the files folder */
     const files = await readdir(sourceDir);
@@ -19,7 +23,7 @@ async function copyDir() {
     for (const file of files) {
       const sourceFilePath = join(sourceDir, file);
       const destinationFilePath = join(destinationDir, file);
-  
+
       await copyFile(sourceFilePath, destinationFilePath);
     }
 
@@ -27,10 +31,11 @@ async function copyDir() {
   } catch (error) {
     console.error('Error copying folder:', error);
   }
-}
+})();
 
 async function checkIfDirectoryExists(dirPath) {
   try {
+    /* check if there is a folder in the specified path */
     const dirStats = await stat(dirPath);
 
     return dirStats.isDirectory();
@@ -44,5 +49,3 @@ async function checkIfDirectoryExists(dirPath) {
     throw error;
   }
 }
-
-copyDir();
